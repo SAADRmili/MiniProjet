@@ -36,7 +36,6 @@ namespace MiniProjet.Core
                 isValid = false;
             }
 
-
             return isValid;
         }
 
