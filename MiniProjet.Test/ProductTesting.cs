@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using AutoFixture;
+﻿using MiniProjet.Core;
 using MiniProjet.Core.Repositories;
 using MiniProjet.Core.Services;
-using MiniProjet.Core;
+using Moq;
+using System.Collections.Generic;
+using Xunit;
 
 namespace MiniProjet.Test
 {
@@ -31,6 +26,11 @@ namespace MiniProjet.Test
             brands = brandRepository.GetBrands();
         }
 
+
+        /// <summary>
+        ///  Test ->  Ajout des nouveaux produits
+        /// </summary>
+
         [Fact]
         public void PassingTestForAddNewProduct()
         {
@@ -38,10 +38,13 @@ namespace MiniProjet.Test
             var product = new Product() { ProductName = "Gucci", ProductPrice = 500, brand = brands[9] };
 
             //act 
-            productservice.AddProduct(product);
+            var success = productservice.AddProduct(product);
 
             //asssert 
 
+
+            Assert.NotNull(product);
+            Assert.True(success);
             Assert.True(product.ProductId > 0);
 
         }
@@ -56,12 +59,14 @@ namespace MiniProjet.Test
             var sucess = productservice.AddProduct(product);
 
             //asssert 
-
             Assert.False(sucess);
 
         }
 
 
+        /// <summary>
+        /// Test -> Modifications des infos du produits
+        /// </summary>
 
         [Fact]
 
@@ -86,9 +91,6 @@ namespace MiniProjet.Test
 
         }
 
-
-
-
         [Fact]
 
         public void PassingTestForUpdateProductWithNameNull()
@@ -110,6 +112,41 @@ namespace MiniProjet.Test
         }
 
         [Fact]
+        public void PassingTestForUpdateProductWithIdNotDispo()
+        {
+            var productId = 41;
+            var nameProductChanged = "updatedProduct";
+
+
+            //act 
+            bool success = false;
+            var product = productservice.GetProduct(productId);
+            if (product == null)
+            {
+                success = false;
+            }
+            else
+            {
+                product.ProductName = nameProductChanged;
+                success = productservice.UpdateProduct(product);
+            }
+
+
+            //assert
+
+            Assert.Null(product);
+            Assert.False(success);
+
+        }
+
+
+
+
+        /// <summary>
+        ///  Test --> Suppression des produits 
+        /// </summary>
+
+        [Fact]
         public void PassingTestForRemoveProduct()
         {
             //arrange 
@@ -123,6 +160,39 @@ namespace MiniProjet.Test
             Assert.Equal(ex, act);
         }
 
+        [Fact]
+        public void PassingTestForRemoveProductUsingMoq()
+        {
+            var service = new Mock<IService>();
+
+            service.Setup(x => x.RemoveProduct(1)).Returns(true);
+
+            var expted = true;
+
+            Assert.Equal(expted, service.Object.RemoveProduct(1));
+
+        }
+
+
+        [Fact]
+        public void PassingTestForRemoveProductWithIdNoDispo()
+        {
+            //arrange 
+            var ex = false;
+
+            //act
+
+            var act = productservice.RemoveProduct(500);
+            //assert 
+
+            Assert.Equal(ex, act);
+        }
+
+
+
+        /// <summary>
+        ///  Test --> Ajout des promos sur les produits
+        /// </summary>
 
         [Fact]
         public void PassingTestForAddPromo()
@@ -170,7 +240,7 @@ namespace MiniProjet.Test
 
             //arrange 
 
-            var product = new Product { ProductName = "sss", ProductPrice = 200, brand = new Brand() { BrandName = "Gucci" } };
+            var product = new Product { ProductName = "sss", ProductPrice = 200, brand = brands[5] };
             productservice.AddProduct(product);
 
             var ex = 40;
@@ -184,32 +254,37 @@ namespace MiniProjet.Test
         }
 
 
+
+
+        /// <summary>
+        /// Test - Verfication de produit en rupture
+        /// </summary>
         [Fact]
-        public void PassingTestForRemoveProductUsingMoq()
+        public void PassingTestForShowProduct()
         {
-            var service = new Mock<IService>();
+            var idProduct = 7;
 
-            service.Setup(x => x.RemoveProduct(1)).Returns(true);
+            //act
+            var act = productservice.GetProduct(idProduct);
 
-            var expted = true;
-
-            Assert.Equal(expted, service.Object.RemoveProduct(1));
+            //assert
+            Assert.NotNull(act);
+            Assert.True(act.ProductId == idProduct);
 
         }
 
         [Fact]
-        public void PassingTestForAddPromoUsingMoq()
+        public void PassingTestForShowProductWithNoExist()
         {
-            var service = new Mock<IService>();
+            var idProduct = 47;
 
-            service.Setup(x => x.AddPromo(0.8, 1)).Returns(4);
+            //act
+            var act = productservice.GetProduct(idProduct);
 
-            var expted = 4;
-
-            Assert.Equal(expted, service.Object.AddPromo(0.8, 1));
+            //assert
+            Assert.Null(act);
 
         }
-
 
 
     }

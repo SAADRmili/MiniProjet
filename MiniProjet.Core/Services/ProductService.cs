@@ -8,7 +8,7 @@ namespace MiniProjet.Core.Services
 {
     public class ProductService
     {
-        IService _service;
+       private IService _service;
         public ProductService(IService service)
         {
             _service = service;
