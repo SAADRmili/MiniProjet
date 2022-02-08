@@ -9,21 +9,17 @@ namespace MiniProjet.Test
 {
     public class ProductTesting
     {
-        private ProductRepository productRepository;
+        private static ProductRepository productRepository = new ProductRepository();
         private BrandRepository brandRepository = new BrandRepository();
-        private ProductService productservice;
+        private ProductService productservice = new ProductService(productRepository); 
         private List<Product> products;
         private List<Brand> brands;
 
         public ProductTesting()
         {
-            productRepository = new ProductRepository();
+            
+           
 
-            productservice = new ProductService(productRepository);
-
-            products = productservice.GetProducts();
-
-            brands = brandRepository.GetBrands();
         }
 
 
@@ -34,6 +30,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForAddNewProduct()
         {
+
+            products = productservice.GetProducts();
+
+            brands = brandRepository.GetBrands();
             //arrange 
             var product = new Product() { ProductName = "Gucci", ProductPrice = 500, brand = brands[9] };
 
@@ -52,6 +52,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForAddNewProductWithNameNull()
         {
+
+            products = productservice.GetProducts();
+
+            brands = brandRepository.GetBrands();
             //arrange 
             var product = new Product() { ProductName = "", ProductPrice = 500, brand = brands[9] };
 
@@ -72,6 +76,10 @@ namespace MiniProjet.Test
 
         public void PassingTestForUpdateProduct()
         {
+
+            products = productservice.GetProducts();
+
+        
             var productId = 1;
             var nameProductChanged = "lolo";
 
@@ -95,6 +103,10 @@ namespace MiniProjet.Test
 
         public void PassingTestForUpdateProductWithNameNull()
         {
+
+            products = productservice.GetProducts();
+
+            
             var productId = 1;
             var nameProductChanged = "";
 
@@ -114,6 +126,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForUpdateProductWithIdNotDispo()
         {
+
+            products = productservice.GetProducts();
+
+        
             var productId = 41;
             var nameProductChanged = "updatedProduct";
 
@@ -149,6 +165,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForRemoveProduct()
         {
+
+            products = productservice.GetProducts();
+
+        
             //arrange 
             var ex = true;
 
@@ -163,6 +183,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForRemoveProductUsingMoq()
         {
+
+            products = productservice.GetProducts();
+
+         
             var service = new Mock<IService>();
 
             service.Setup(x => x.RemoveProduct(1)).Returns(true);
@@ -177,6 +201,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForRemoveProductWithIdNoDispo()
         {
+
+            products = productservice.GetProducts();
+
+          
             //arrange 
             var ex = false;
 
@@ -198,6 +226,9 @@ namespace MiniProjet.Test
         public void PassingTestForAddPromo()
         {
 
+            products = productservice.GetProducts();
+
+           
             //arrange 
 
             var ex = 4;
@@ -216,10 +247,14 @@ namespace MiniProjet.Test
         public void PassingTestForAddPromoExisitProduct()
         {
 
+            products = productservice.GetProducts();
+
+           
             //arrange 
 
             var product = productRepository.GetProduct(5);
             product.ProductPrice = 200;
+            
             productservice.UpdateProduct(product);
 
             var ex = 40;
@@ -238,9 +273,12 @@ namespace MiniProjet.Test
         public void PassingTestForAddPromoWithAddNewProduct()
         {
 
+
+            brands = brandRepository.GetBrands();
             //arrange 
 
             var product = new Product { ProductName = "sss", ProductPrice = 200, brand = brands[5] };
+
             productservice.AddProduct(product);
 
             var ex = 40;
@@ -262,6 +300,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForShowProduct()
         {
+
+            products = productservice.GetProducts();
+
+           
             var idProduct = 7;
 
             //act
@@ -276,6 +318,10 @@ namespace MiniProjet.Test
         [Fact]
         public void PassingTestForShowProductWithNoExist()
         {
+
+            products = productservice.GetProducts();
+
+          
             var idProduct = 47;
 
             //act

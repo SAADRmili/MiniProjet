@@ -17,10 +17,7 @@ namespace MiniProjet.Core.Repositories
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static double NextDouble(
-       this Random random,
-       double minValue,
-       double maxValue)
+        public static double NextDouble( this Random random,double minValue,   double maxValue)
         {
             return random.NextDouble() * (maxValue - minValue) + minValue;
         }
