@@ -95,8 +95,6 @@ namespace MiniProjet.Test
             Assert.True(success);
             Assert.Equal(nameProductChanged, newEtat.ProductName);
 
-
-
         }
 
         [Fact]
