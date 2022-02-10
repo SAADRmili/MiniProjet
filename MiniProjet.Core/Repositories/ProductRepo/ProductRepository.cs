@@ -65,8 +65,12 @@ namespace MiniProjet.Core.Repositories.ProductRepo
                 if(item.ProductId == IdProduct)
                 {
                     Products.Remove(item);
+                    var brand = brandRepo.GetBrand(item.Brand.BrandName);
+                    brand.Products.Remove(item);
                 }
             }
+
+           
         }
 
         public bool UpdateProduct(Product product)

@@ -18,28 +18,28 @@ namespace MiniProjet.Test
         /// --> Test for AddNewProduct
         /// </summary>
         [Theory]
-       [InlineData("Product1",200) ]
-       [InlineData("Product2",300) ]
-       [InlineData("Product3",400) ]
-       [InlineData("Product4",500) ]
-        public void  PassingTestForAddProduct(string a , double b)
+        [InlineData("Product1", 200)]
+        [InlineData("Product2", 300)]
+        [InlineData("Product3", 400)]
+        [InlineData("Product4", 500)]
+        public void PassingTestForAddProduct(string a, double b)
         {
             //arrange 
             brandRepo = new BrandRepo(Brands);
-            productRepository = new ProductRepository(products,brandRepo);
+            productRepository = new ProductRepository(products, brandRepo);
 
-           
-              var  product = new Product
+
+            var product = new Product
             {
-                
+
                 ProductName = a,
                 ProductPrice = b,
-                Brand =  new Brand
+                Brand = new Brand
                 {
-                    BrandName ="Gucci",
+                    BrandName = "Gucci",
 
                 }
-              };
+            };
 
             //act 
             productRepository.AddNewProduct(product);
@@ -52,7 +52,7 @@ namespace MiniProjet.Test
         [Theory]
         [InlineData("", 200)]
         [InlineData("Product2", 0)]
-       
+
         public void PassingTestForAddProductWithNullNameAndPrice(string a, double b)
         {
             //arrange 
@@ -83,7 +83,7 @@ namespace MiniProjet.Test
 
 
         [Theory]
-       
+
         [InlineData("Product1", 1000)]
 
         public void PassingTestForAddProductWithNullBrand(string a, double b)
@@ -98,7 +98,7 @@ namespace MiniProjet.Test
 
                 ProductName = a,
                 ProductPrice = b,
-               
+
             };
 
             //act 
@@ -119,7 +119,7 @@ namespace MiniProjet.Test
         public void PassingTestForRemoveProduct(string a, double b)
         {
             //arrange 
-            
+
             brandRepo = new BrandRepo(Brands);
             productRepository = new ProductRepository(products, brandRepo);
 
@@ -141,17 +141,191 @@ namespace MiniProjet.Test
             productRepository.RemoveProduct(product.ProductId);
 
             //assert 
-
+            Assert.DoesNotContain(Brands, b => b.BrandId == product.Brand.BrandId);
             Assert.DoesNotContain(products, prod => prod.ProductId == product.ProductId);
 
         }
 
 
+        [Theory]
+        [InlineData("Product1", 200)]
+
+        public void PassingTestForGetProduct(string a, double b)
+        {
+            //arrange 
+            brandRepo = new BrandRepo(Brands);
+            productRepository = new ProductRepository(products, brandRepo);
+
+
+            var Addproduct = new Product
+            {
+
+                ProductName = a,
+                ProductPrice = b,
+                Brand = new Brand
+                {
+                    BrandName = "Gucci",
+
+                }
+
+            };
+
+            productRepository.AddNewProduct(Addproduct);
+
+            //act 
+
+            var product = productRepository.GetProduct(Addproduct.ProductId);
+
+            //assert 
+
+            Assert.NotNull(product);
+            Assert.Equal(product, Addproduct);
+            Assert.Contains(products, p => p.ProductId == product.ProductId);
+
+        }
+
+  
+
+        public void PassingTestForGetProductDoesntExist()
+        {
+            //arrange 
+            Guid id = new Guid("3F2504E0 - 4F89 - 11D3 - 9A0C - 0305E82C3301");
+
+                    //act 
+
+
+            var product = productRepository.GetProduct(id);
+
+
+            //assert 
+
+            Assert.Null(product);
+           
+            Assert.DoesNotContain(products, p => p.ProductId == product.ProductId);
+
+        }
+
+
+        [Fact]
+        public void PassingTestForGetProducts()
+        {
+            List<string> moreBrands = new List<string>() { "DIOR", "HUGO BOSS", "Armani", "Lancôme", "TOM FORD", "Yves Saint Laurent", "CALVIN KLEIN", "Diesel", "GUCCI", "HERMÈS" };
+            brandRepo = new BrandRepo(Brands);
+            productRepository = new ProductRepository(products, brandRepo);
+            
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                
+                var product = new Product
+                {
+
+                    ProductName = "Product" + i,
+                    ProductPrice = 500,
+                    Brand = new Brand
+                    {
+                        BrandName = moreBrands[i],
+                    }
+                };
+
+                productRepository.AddNewProduct(product);
+            }
+
+
+            //assert 
+
+            Assert.NotEmpty(products);
+            Assert.True(products.Count == 10);
+
+        }
+
+
+        [Fact]
+
+        public void PassingTestForAddDiscount()
+        {
+            //arrange 
+
+            List<string> moreBrands = new List<string>() { "DIOR", "HUGO BOSS", "Armani", "Lancôme", "TOM FORD",                                              "Yves Saint Laurent", "CALVIN KLEIN", "Diesel", "GUCCI", "HERMÈS" };
+
+
+            brandRepo = new BrandRepo(Brands);
+            productRepository = new ProductRepository(products, brandRepo);
 
 
 
+            for (int i = 0; i < 10; i++)
+            {
+
+                var product = new Product
+                {
+
+                    ProductName = "Product" + i,
+                    ProductPrice = 500,
+                    Brand = new Brand
+                    {
+                        BrandName = moreBrands[i],
+                    }
+                };
+
+                productRepository.AddNewProduct(product);
+            }
+
+
+            //assert 
+
+            foreach (var item in products)
+            {
+                productRepository.AddDiscount(0.8,item);
+            }
+
+            var ex = 100;
+            for (int i = 0; i < products.Count; i++)
+            {
+                Assert.True(products[i].PromoPrice != 0);
+                Assert.Equal(ex, products[i].PromoPrice);
+            }
+
+
+        }
+
+
+        [Fact]
+
+        public void PassingTestForAddDiscountToListOfProduct()
+        {
+            //arrange 
+            brandRepo = new BrandRepo(Brands);
+            productRepository = new ProductRepository(products, brandRepo);
 
 
 
+            var product = new Product
+            {
+
+                ProductName = "Product1",
+                ProductPrice = 500,
+                Brand = new Brand
+                {
+                    BrandName = "Gucci",
+
+                }
+
+            };
+
+            productRepository.AddNewProduct(product);
+            //act 
+
+            productRepository.AddDiscount(0.8, product);
+
+            var ex = 100;
+            //assert 
+
+            Assert.True(product.PromoPrice != 0);
+            Assert.Equal(ex, product.PromoPrice);
+
+
+        }
     }
 }
