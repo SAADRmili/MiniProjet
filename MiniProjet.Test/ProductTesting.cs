@@ -1,7 +1,6 @@
-﻿using MiniProjet.Core;
-using MiniProjet.Core.Repositories;
-using MiniProjet.Core.Services;
-using Moq;
+﻿using MiniProjet.Core.Models;
+using MiniProjet.Core.Repositories.ProductRepo;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -9,327 +8,255 @@ namespace MiniProjet.Test
 {
     public class ProductTesting
     {
-        private static ProductRepository productRepository = new ProductRepository();
-        private BrandRepository brandRepository = new BrandRepository();
-        private ProductService productservice = new ProductService(productRepository); 
-        private List<Product> products;
-        private List<Brand> brands;
+        private ProductRepository productRepository;
+        private List<Product> products = new List<Product>();
+        
 
-        public ProductTesting()
+        /// <summary>
+        /// --> Test for AddNewProduct
+        /// </summary>
+       [Theory]
+       [InlineData("Product1",200) ]
+       [InlineData("Product2",300) ]
+       [InlineData("Product3",400) ]
+       [InlineData("Product4",500) ]
+        public void  PassingTestForAddProduct(string a , double b)
         {
+            //arrange 
             
-           
+            productRepository = new ProductRepository(products);
 
+            Guid guid = Guid.NewGuid();
+          var  product = new Product
+            {
+                ProductId = guid,
+                ProductName = a,
+                ProductPrice = b,
+            };
+
+            //act 
+            productRepository.AddNewProduct(product);
+            //assert
+            Assert.NotEmpty(products);
+            Assert.Contains(products, prod => prod.ProductId == product.ProductId);
+        }
+
+        [Fact]
+        public void PassingTestForAddProductWithNameNull()
+        {
+            //arrange 
+            
+            productRepository = new ProductRepository(products);
+
+            Guid guid = Guid.NewGuid();
+            var product = new Product
+            {
+                ProductId = guid,
+                ProductName = "",
+                ProductPrice = 300,
+            };
+
+            //act 
+            productRepository.AddNewProduct(product);
+            //assert
+            Assert.Empty(products);
         }
 
 
-        /// <summary>
-        ///  Test ->  Ajout des nouveaux produits
-        /// </summary>
-
         [Fact]
-        public void PassingTestForAddNewProduct()
+        public void PassingTestForAddProductWithNegativePrice()
         {
-
-            products = productservice.GetProducts();
-
-            brands = brandRepository.GetBrands();
             //arrange 
-            var product = new Product() { ProductName = "Gucci", ProductPrice = 500, brand = brands[9] };
+            
+            productRepository = new ProductRepository(products);
+
+            Guid guid = Guid.NewGuid();
+            var product = new Product
+            {
+                ProductId = guid,
+                ProductName = "",
+                ProductPrice = -80,
+            };
 
             //act 
-            var success = productservice.AddProduct(product);
+            productRepository.AddNewProduct(product);
+            //assert
+            Assert.Empty(products);
+        }
 
-            //asssert 
 
+
+        [Theory]
+        [InlineData("Product1", 200)]
+        [InlineData("Product2", 300)]
+        [InlineData("Product3", 400)]
+        [InlineData("Product4", 500)]
+
+        public void PassingTestForRemoveProduct(string a, double b)
+        {
+            //arrange 
+            
+            productRepository = new ProductRepository(products);
+
+            Guid guid = Guid.NewGuid();
+            var product = new Product
+            {
+                ProductId = guid,
+                ProductName = a,
+                ProductPrice = b,
+            };
+
+            productRepository.AddNewProduct(product);
+            //act 
+
+            productRepository.RemoveProduct(product.ProductId);
+
+            //assert 
+
+            Assert.DoesNotContain(products, prod => prod.ProductId == product.ProductId);
+
+        }
+
+        [Theory]
+        [InlineData("Product1", 200)]
+        [InlineData("Product2", 300)]
+        [InlineData("Product3", 400)]
+        [InlineData("Product4", 500)]
+
+        public void PassingTestForGetProduct(string a, double b)
+        {
+            //arrange 
+         
+            productRepository = new ProductRepository(products);
+
+            Guid guid = Guid.NewGuid();
+            var Addproduct = new Product
+            {
+                ProductId = guid,
+                ProductName = a,
+                ProductPrice = b,
+            };
+
+            productRepository.AddNewProduct(Addproduct);
+
+            //act 
+
+            var product  = productRepository.GetProduct(Addproduct.ProductId);
+
+            //assert 
 
             Assert.NotNull(product);
-            Assert.True(success);
-            Assert.True(product.ProductId > 0);
+            Assert.Equal(product, Addproduct);
+            Assert.Contains(products, p => p.ProductId == product.ProductId);
 
         }
+
+
 
         [Fact]
-        public void PassingTestForAddNewProductWithNameNull()
+        public void PassingTestForGetProducts()
         {
+           
+            productRepository = new ProductRepository(products);
 
-            products = productservice.GetProducts();
 
-            brands = brandRepository.GetBrands();
-            //arrange 
-            var product = new Product() { ProductName = "", ProductPrice = 500, brand = brands[9] };
+            for (int i = 0; i < 10; i++)
+            {
+                Guid guid = Guid.NewGuid();
+                var product = new Product
+                {
+                    ProductId = guid,
+                    ProductName = "Product"+i,
+                    ProductPrice = 500,
+                };
 
-            //act 
-            var sucess = productservice.AddProduct(product);
+                productRepository.AddNewProduct(product);
+            }
 
-            //asssert 
-            Assert.False(sucess);
+
+            //assert 
+
+            Assert.NotEmpty(products);
+            Assert.True(products.Count == 10);
 
         }
 
-
-        /// <summary>
-        /// Test -> Modifications des infos du produits
-        /// </summary>
 
         [Fact]
 
         public void PassingTestForUpdateProduct()
         {
+            //arrange
+            productRepository = new ProductRepository(products);
 
-            products = productservice.GetProducts();
 
-        
-            var productId = 1;
-            var nameProductChanged = "lolo";
+            for (int i = 0; i < 10; i++)
+            {
+                Guid guid = Guid.NewGuid();
+                var product = new Product
+                {
+                    ProductId = guid,
+                    ProductName = "Product" + i,
+                    ProductPrice = 500,
+                };
+
+                productRepository.AddNewProduct(product);
+            }
+
 
 
             //act 
-            var product = productservice.GetProduct(productId);
-            product.ProductName = nameProductChanged;
 
-            var success = productservice.UpdateProduct(product);
+            var productUpdated = products[5];
+            productUpdated.ProductName = "LOLO";
+            productUpdated.ProductPrice = 399;
 
-            var newEtat = productservice.GetProduct(productId);
 
+            var success = productRepository.UpdateProduct(productUpdated);
+            //assert 
             Assert.True(success);
-            Assert.Equal(nameProductChanged, newEtat.ProductName);
+            Assert.NotNull(productUpdated);
+            Assert.True(products[5].ProductPrice == 399);
+            Assert.Contains(products, p => p.ProductId == productUpdated.ProductId);
 
         }
 
-        [Fact]
-
-        public void PassingTestForUpdateProductWithNameNull()
-        {
-
-            products = productservice.GetProducts();
-
-            
-            var productId = 1;
-            var nameProductChanged = "";
-
-
-            //act 
-            var product = productservice.GetProduct(productId);
-            product.ProductName = nameProductChanged;
-
-            var success = productservice.UpdateProduct(product);
-
-            //assert
-
-            Assert.False(success);
-
-        }
 
         [Fact]
-        public void PassingTestForUpdateProductWithIdNotDispo()
+
+        public void PassingTestForUpdateProductWithNullName()
         {
-
-            products = productservice.GetProducts();
-
-        
-            var productId = 41;
-            var nameProductChanged = "updatedProduct";
+            //arrange
+            productRepository = new ProductRepository(products);
 
 
-            //act 
-            bool success = false;
-            var product = productservice.GetProduct(productId);
-            if (product == null)
+            for (int i = 0; i < 10; i++)
             {
-                success = false;
-            }
-            else
-            {
-                product.ProductName = nameProductChanged;
-                success = productservice.UpdateProduct(product);
+                Guid guid = Guid.NewGuid();
+                var product = new Product
+                {
+                    ProductId = guid,
+                    ProductName = "Product" + i,
+                    ProductPrice = 500,
+                };
+
+                productRepository.AddNewProduct(product);
             }
 
 
-            //assert
 
-            Assert.Null(product);
+            //act 
+
+            var productUpdated = productRepository.GetProduct(products[5].ProductId);
+
+            productUpdated.ProductName = "";
+            var success = productRepository.UpdateProduct(productUpdated);
+            //assert 
+
             Assert.False(success);
-
-        }
-
-
-
-
-        /// <summary>
-        ///  Test --> Suppression des produits 
-        /// </summary>
-
-        [Fact]
-        public void PassingTestForRemoveProduct()
-        {
-
-            products = productservice.GetProducts();
-
-        
-            //arrange 
-            var ex = true;
-
-            //act
-
-            var act = productservice.RemoveProduct(2);
-            //assert 
-
-            Assert.Equal(ex, act);
-        }
-
-        [Fact]
-        public void PassingTestForRemoveProductUsingMoq()
-        {
-
-            products = productservice.GetProducts();
-
-         
-            var service = new Mock<IService>();
-
-            service.Setup(x => x.RemoveProduct(1)).Returns(true);
-
-            var expted = true;
-
-            Assert.Equal(expted, service.Object.RemoveProduct(1));
-
-        }
-
-
-        [Fact]
-        public void PassingTestForRemoveProductWithIdNoDispo()
-        {
-
-            products = productservice.GetProducts();
-
           
-            //arrange 
-            var ex = false;
-
-            //act
-
-            var act = productservice.RemoveProduct(500);
-            //assert 
-
-            Assert.Equal(ex, act);
-        }
-
-
-
-        /// <summary>
-        ///  Test --> Ajout des promos sur les produits
-        /// </summary>
-
-        [Fact]
-        public void PassingTestForAddPromo()
-        {
-
-            products = productservice.GetProducts();
-
-           
-            //arrange 
-
-            var ex = 4;
-
-            //act
-
-            double act = productservice.AddPromoToProduct(products[1].ProductId, 0.8);
-            //assert 
-
-            Assert.Equal(ex, act);
-        }
-
-
-
-        [Fact]
-        public void PassingTestForAddPromoExisitProduct()
-        {
-
-            products = productservice.GetProducts();
-
-           
-            //arrange 
-
-            var product = productRepository.GetProduct(5);
-            product.ProductPrice = 200;
             
-            productservice.UpdateProduct(product);
-
-            var ex = 40;
-            //act
-
-            double act = productservice.AddPromoToProduct(product.ProductId, 0.8);
-
-            //assert 
-
-            Assert.Equal(ex, act);
-        }
-
-
-
-        [Fact]
-        public void PassingTestForAddPromoWithAddNewProduct()
-        {
-
-
-            brands = brandRepository.GetBrands();
-            //arrange 
-
-            var product = new Product { ProductName = "sss", ProductPrice = 200, brand = brands[5] };
-
-            productservice.AddProduct(product);
-
-            var ex = 40;
-
-            //act
-
-            double act = productservice.AddPromoToProduct(product.ProductId, 0.8);
-            //assert 
-
-            Assert.Equal(ex, act);
-        }
-
-
-
-
-        /// <summary>
-        /// Test - Verfication de produit en rupture
-        /// </summary>
-        [Fact]
-        public void PassingTestForShowProduct()
-        {
-
-            products = productservice.GetProducts();
-
-           
-            var idProduct = 7;
-
-            //act
-            var act = productservice.GetProduct(idProduct);
-
-            //assert
-            Assert.NotNull(act);
-            Assert.True(act.ProductId == idProduct);
 
         }
-
-        [Fact]
-        public void PassingTestForShowProductWithNoExist()
-        {
-
-            products = productservice.GetProducts();
-
-          
-            var idProduct = 47;
-
-            //act
-            var act = productservice.GetProduct(idProduct);
-
-            //assert
-            Assert.Null(act);
-
-        }
-
-
     }
 }

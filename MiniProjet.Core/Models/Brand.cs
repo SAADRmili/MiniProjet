@@ -5,55 +5,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiniProjet.Core
+namespace MiniProjet.Core.Models
 {
     public class Brand
     {
-        private static int _counter;
-        public int BrandId { get; private set; }
+        public Guid BrandId { get; set; }
 
-        public string BrandName { get; set; }
+        public String  BrandName { get; set; }
 
-        List<Product> Lst = new List<Product>();
-
-        public List<Product> GetSetProduct
-
-        {
-            get { return Lst; }
-
-            set { Lst = value; }
-        }
-
-        public Brand()
-        {
-            BrandId = Interlocked.Increment(ref _counter);
-        }
-
-        public bool Validate()
-        {
-            bool isValid = true;
-            if (string.IsNullOrEmpty(BrandName))
-            {
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-        public void Print()
-
-        {
-            Console.WriteLine("Brand:- " + this.BrandName);
-
-            Console.WriteLine("Product Owns : ");
-
-            foreach (Product c in this.GetSetProduct)
-
-            {
-                Console.WriteLine("Product ID:- " + c.ProductId + "  -> Product Name:- " + c.ProductName + " ---> Product Price:- " + c.ProductPrice);
-            }
-
-        }
-
+        public List<Product> Products { get; set; }
     }
 }
