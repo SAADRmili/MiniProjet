@@ -254,9 +254,41 @@ namespace MiniProjet.Test
             //assert 
 
             Assert.False(success);
-          
+
+        }
+
+
+        [Fact]
+        
+        public void PassingTestForAddDiscount ()
+        {
+            //arrange 
+
+            productRepository = new ProductRepository(products);
+
+            Guid guid = Guid.NewGuid();
+            var product = new Product
+            {
+                ProductId = guid,
+                ProductName = "Product1",
+                ProductPrice = 300,
+            };
+
+            productRepository.AddNewProduct(product);
+            //act 
+
+            productRepository.AddDiscount(0.8, product);
+
+            var ex = 60;
+            //assert 
+
+            Assert.True(product.PromoPrice!=0);
+            Assert.Equal(ex,product.PromoPrice);
             
 
         }
+
+
+       
     }
 }

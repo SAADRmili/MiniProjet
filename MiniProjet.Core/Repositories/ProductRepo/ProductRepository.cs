@@ -14,6 +14,18 @@ namespace MiniProjet.Core.Repositories.ProductRepo
         {
             Products = products;
         }
+
+        public void AddDiscount(double promo, Product pr)
+        {
+            var product = Products.Single(p => p.ProductId == pr.ProductId);
+
+            if(product.ProductPrice == 0)
+            {
+                product.PromoPrice = 0;
+            }
+            product.PromoPrice = product.ProductPrice - (product.ProductPrice * promo);
+        }
+
         public void AddNewProduct(Product product)
         {
             if (!ValidateProduct(product)) Products.Add(product);
@@ -47,6 +59,7 @@ namespace MiniProjet.Core.Repositories.ProductRepo
             {
                 p.ProductName = product.ProductName;
                 p.ProductPrice = product.ProductPrice;
+                p.Brand = product.Brand;
                 return true;
             }
             return false;

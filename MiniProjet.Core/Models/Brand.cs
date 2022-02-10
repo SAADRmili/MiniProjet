@@ -13,6 +13,6 @@ namespace MiniProjet.Core.Models
 
         public String  BrandName { get; set; }
 
-        public List<Product> Products { get; set; }
+        public List<Product> Products { get; set; } = new();
     }
 }

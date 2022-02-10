@@ -19,6 +19,8 @@ namespace MiniProjet.Core.Repositories.ProductRepo
 
         Product GetProduct(Guid IdProduct );
 
+        void AddDiscount(double promo,Product p);
+
         bool ValidateProduct(Product product);
     }
 }
