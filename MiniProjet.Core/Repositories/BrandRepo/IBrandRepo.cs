@@ -14,5 +14,7 @@ namespace MiniProjet.Core.Repositories.BrandRepo
         Brand GetBrand(string brandName);
 
         void AddBrands(Brand brand);
+
+        
     }
 }

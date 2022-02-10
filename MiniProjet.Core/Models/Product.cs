@@ -9,7 +9,7 @@ namespace MiniProjet.Core.Models
 {
     public class Product
     {
-        public Guid ProductId { get; set; }
+        public Guid ProductId { get; private set; } = Guid.NewGuid();
 
         public string ProductName { get; set ; }
         public double ProductPrice { get; set; }
