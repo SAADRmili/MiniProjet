@@ -185,25 +185,7 @@ namespace MiniProjet.Test
         }
 
   
-
-        public void PassingTestForGetProductDoesntExist()
-        {
-            //arrange 
-            Guid id = new Guid("3F2504E0 - 4F89 - 11D3 - 9A0C - 0305E82C3301");
-
-                    //act 
-
-
-            var product = productRepository.GetProduct(id);
-
-
-            //assert 
-
-            Assert.Null(product);
-           
-            Assert.DoesNotContain(products, p => p.ProductId == product.ProductId);
-
-        }
+    
 
 
         [Fact]
@@ -296,6 +278,7 @@ namespace MiniProjet.Test
         public void PassingTestForAddDiscountToListOfProduct()
         {
             //arrange 
+             List<string> moreBrands = new List<string>() { "DIOR", "HUGO BOSS", "Armani", "Lancôme", "TOM FORD",                                              "Yves Saint Laurent", "CALVIN KLEIN", "Diesel", "GUCCI", "HERMÈS" };
             brandRepo = new BrandRepo(Brands);
             productRepository = new ProductRepository(products, brandRepo);
 
@@ -327,5 +310,9 @@ namespace MiniProjet.Test
 
 
         }
+
+
+
+        
     }
 }
