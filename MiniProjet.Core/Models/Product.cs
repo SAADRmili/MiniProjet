@@ -5,45 +5,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MiniProjet.Core
+namespace MiniProjet.Core.Models
 {
     public class Product
     {
+        public Guid ProductId { get; private set; } = Guid.NewGuid();
 
-        public Product()
-        {
-            ProductId = Interlocked.Increment(ref _counter);
-
-        }
-
-
-
-        private static int _counter;
-        public int ProductId { get; private set; }
-
-        public string ProductName { get; set; }
-
+        public string ProductName { get; set ; }
         public double ProductPrice { get; set; }
 
-        public Brand brand { get; set; }
+        public double PromoPrice { get; set; }
 
-
-        public bool Validate()
-        {
-            bool isValid = true;
-            if (string.IsNullOrEmpty(ProductName))
-            {
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-
-
-        public override string ToString()
-        {
-            return " Product ID:- " + ProductId + "\n  -> Product Name:- " + ProductName + " ---> Product Price:- " + ProductPrice + " Brand: --> " + brand.BrandName;
-        }
+        public Brand Brand { get; set; }
     }
 }
