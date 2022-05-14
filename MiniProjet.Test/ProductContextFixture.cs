@@ -14,6 +14,7 @@ namespace MiniProjet.Test
         private List<Product> products = new List<Product>();
         private List<Brand> Brands = new List<Brand>();
         private IBrandRepo brandRepo;
+
         public ProductRepository Context { get; private set; }
 
         public ProductContextFixture()
@@ -25,7 +26,7 @@ namespace MiniProjet.Test
 
         public void Dispose()
         {
-            Context = null; 
+            
         }
     }
 }
