@@ -22,6 +22,7 @@ namespace MiniProjet.Test
         {
             var product = new Product
             {
+                
                 ProductName = "Product1",
                 ProductPrice = 500,
                 Brand = new Brand

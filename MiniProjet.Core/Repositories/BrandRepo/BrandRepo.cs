@@ -1,15 +1,12 @@
 ﻿using MiniProjet.Core.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MiniProjet.Core.Repositories.BrandRepo
 {
     public class BrandRepo : IBrandRepo
     {
-        private List<Brand> Brands ;
+        private List<Brand> Brands;
         public BrandRepo(List<Brand> brands)
         {
             Brands = brands;
@@ -17,9 +14,7 @@ namespace MiniProjet.Core.Repositories.BrandRepo
 
         public void AddBrands(Brand brand)
         {
-
             Brands.Add(brand);
-            
         }
 
         public Brand GetBrand(string brandName)
@@ -28,10 +23,7 @@ namespace MiniProjet.Core.Repositories.BrandRepo
             return brand;
         }
 
-        public List<Brand> GetBrands()
-        {
-           
-            return Brands;
-        }
+        public List<Brand> GetBrands() => Brands;
+        
     }
 }
