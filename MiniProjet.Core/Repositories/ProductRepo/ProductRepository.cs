@@ -15,7 +15,6 @@ namespace MiniProjet.Core.Repositories.ProductRepo
             brandRepo = _brandRepo;
             Products = products;
         }
-        //
         public void AddDiscount(double promo, Product pr)
         {
             var product = Products.Single(p => p.ProductId == pr.ProductId);
@@ -27,11 +26,9 @@ namespace MiniProjet.Core.Repositories.ProductRepo
             if (!ValidateProduct(product))
             {
                 Products.Add(product);
-                //brandRepo.AddBrands(product.Brand);
                 var brand = brandRepo.GetBrand(product.Brand.BrandName);
                 brand.Products.Add(product);
             }
-
         }
 
         public Product GetProduct(Guid IdProduct) => Products.Single(p => p.ProductId == IdProduct);
@@ -43,7 +40,6 @@ namespace MiniProjet.Core.Repositories.ProductRepo
                 .SelectMany(brand => brand.Products)
                 .ToList()
                 .RemoveAll(p => p.ProductId == productId);
-
         }
         public bool UpdateProduct(Product product)
         {
